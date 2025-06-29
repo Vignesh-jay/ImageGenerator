@@ -1,11 +1,10 @@
-# Flask Text-to-Image App (Stability AI v2beta)
+# Hugging Face Free Text-to-Image App
 
-This app lets you generate AI images from text using Stability AI v2beta API.
+A simple web app using Hugging Face's **Stable Diffusion 2.1** model (completely free).
 
-## Setup
-
-1. Clone or copy the files
-2. Install requirements:
+## 🔧 Setup
 
 ```bash
 pip install -r requirements.txt
+export HF_TOKEN=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
+python app.py

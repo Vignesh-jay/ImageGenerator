@@ -6,7 +6,7 @@
 <body>
     <h1>Result</h1>
     <p>Prompt: {{ prompt }}</p>
-    <img src="{{ url_for('static', filename=image_url) }}" alt="Generated Image" width="512">
+    <img src="{{ url_for('static', filename=image_url) }}" alt="Generated Image" width="512"><br>
     <a href="/download/{{ image_url.split('/')[-1] }}">Download ZIP</a><br>
     <a href="/">Generate Another</a>
 </body>

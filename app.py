@@ -4,14 +4,14 @@ import requests
 import io
 import zipfile
 from datetime import datetime
-from base64 import b64decode
+from PIL import Image
 
 app = Flask(__name__)
 IMAGE_DIR = 'static/generated'
 os.makedirs(IMAGE_DIR, exist_ok=True)
 
-STABILITY_API_KEY = os.getenv('STABILITY_API_KEY')
-STABILITY_API_URL = 'https://api.stability.ai/v2beta/stable-image/generate/core'
+HF_TOKEN = os.getenv('HF_TOKEN')
+HF_API_URL = "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-2-1"
 
 @app.route('/')
 def index():
@@ -21,33 +21,28 @@ def index():
 def generate():
     prompt = request.form['prompt']
 
-    files = {
-        'prompt': (None, prompt),
-        'mode': (None, 'text-to-image'),
-        'output_format': (None, 'png')
-    }
-
     headers = {
-        'Authorization': f'Bearer {STABILITY_API_KEY}',
-        'Accept': 'application/json'
+        "Authorization": f"Bearer {HF_TOKEN}"
     }
 
-    response = requests.post(STABILITY_API_URL, headers=headers, files=files)
+    payload = {
+        "inputs": prompt
+    }
+
+    response = requests.post(HF_API_URL, headers=headers, json=payload)
 
     if response.status_code != 200:
         return f"Error generating image: {response.text}", 500
 
-    image_data = response.json()['image']
-    image_bytes = b64decode(image_data)
-
     timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
-    filename = f'image_{timestamp}.png'
+    filename = f"image_{timestamp}.png"
     filepath = os.path.join(IMAGE_DIR, filename)
-    with open(filepath, 'wb') as f:
-        f.write(image_bytes)
-        image_url = os.path.join(IMAGE_DIR, filename).replace('static/', '')
-        return render_template('result.html', image_url=image_url, prompt=prompt)
 
+    with open(filepath, 'wb') as f:
+        f.write(response.content)
+
+    image_url = filepath.replace("static/", "")
+    return render_template('result.html', image_url=image_url, prompt=prompt)
 
 @app.route('/download/<filename>')
 def download(filename):
