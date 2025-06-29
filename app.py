@@ -46,7 +46,9 @@ def generate():
     with open(filepath, 'wb') as f:
         f.write(image_bytes)
 
-    return render_template('result.html', image_url=filepath, prompt=prompt)
+image_url = os.path.join(IMAGE_DIR, filename).replace('static/', '')
+return render_template('result.html', image_url=image_url, prompt=prompt)
+
 
 @app.route('/download/<filename>')
 def download(filename):
