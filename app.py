@@ -23,25 +23,25 @@ def generate():
     prompt = request.form['prompt']
 
     headers = {
-    'Authorization': f'Bearer {STABILITY_API_KEY}',
-    'Content-Type': 'application/json',
-    'Accept': 'application/json',
-}
+        'Authorization': f'Bearer {STABILITY_API_KEY}',
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+    }
 
-json_data = {
-    "prompt": prompt,
+    json_data = {
+        "prompt": prompt,
     "output_format": "png",
     "mode": "text-to-image"
-}
+    }
 
     response = requests.post(STABILITY_API_URL, headers=headers, json=json_data)
 
     if response.status_code != 200:
         return f"Error generating image: {response.text}", 500
 
-    image_data = response.json()['image']
+    image_data = response.json()['artifacts'][0]['base64']
     image_bytes = b64decode(image_data)
-    
+
     timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
     filename = f'image_{timestamp}.png'
     filepath = os.path.join(IMAGE_DIR, filename)
