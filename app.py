@@ -12,6 +12,7 @@ os.makedirs(IMAGE_DIR, exist_ok=True)
 
 HF_TOKEN = os.getenv('HF_TOKEN')
 HF_API_URL = "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-2-1"
+print("Using token:", HF_TOKEN[:6], "..." if HF_TOKEN else "No token found")
 
 @app.route('/')
 def index():
