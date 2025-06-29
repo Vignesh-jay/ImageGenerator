@@ -1,4 +1,3 @@
-
 from flask import Flask, render_template, request, send_file
 import os
 import requests
@@ -22,19 +21,18 @@ def index():
 def generate():
     prompt = request.form['prompt']
 
+    files = {
+        'prompt': (None, prompt),
+        'mode': (None, 'text-to-image'),
+        'output_format': (None, 'png')
+    }
+
     headers = {
         'Authorization': f'Bearer {STABILITY_API_KEY}',
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
+        'Accept': 'application/json'
     }
 
-    json_data = {
-        "prompt": prompt,
-        "output_format": "png",
-        "mode": "text-to-image"
-    }
-
-    response = requests.post(STABILITY_API_URL, headers=headers, json=json_data)
+    response = requests.post(STABILITY_API_URL, headers=headers, files=files)
 
     if response.status_code != 200:
         return f"Error generating image: {response.text}", 500
