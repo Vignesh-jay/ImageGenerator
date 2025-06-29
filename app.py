@@ -12,7 +12,7 @@ IMAGE_DIR = 'static/generated'
 os.makedirs(IMAGE_DIR, exist_ok=True)
 
 STABILITY_API_KEY = os.getenv('STABILITY_API_KEY')
-STABILITY_API_URL = 'https://api.stability.ai/v1/generation/stable-diffusion-v1-5/text-to-image'
+STABILITY_API_URL = 'https://api.stability.ai/v2beta/stable-image/generate/core'
 
 @app.route('/')
 def index():
