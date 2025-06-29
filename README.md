@@ -6,5 +6,5 @@ A simple web app using Hugging Face's **Stable Diffusion 2.1** model (completely
 
 ```bash
 pip install -r requirements.txt
-export HF_TOKEN=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
+export HF_TOKEN=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
 python app.py
