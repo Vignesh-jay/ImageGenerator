@@ -5,13 +5,14 @@ import requests
 import io
 import zipfile
 from datetime import datetime
+from base64 import b64decode
 
 app = Flask(__name__)
 IMAGE_DIR = 'static/generated'
 os.makedirs(IMAGE_DIR, exist_ok=True)
 
-OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
-OPENAI_API_URL = 'https://api.openai.com/v1/images/generations'
+STABILITY_API_KEY = os.getenv('STABILITY_API_KEY')
+STABILITY_API_URL = 'https://api.stability.ai/v1/generation/stable-diffusion-v1-5/text-to-image'
 
 @app.route('/')
 def index():
@@ -22,28 +23,34 @@ def generate():
     prompt = request.form['prompt']
 
     headers = {
-        'Authorization': f'Bearer {OPENAI_API_KEY}',
+        'Authorization': f'Bearer {STABILITY_API_KEY}',
+        'Accept': 'application/json',
         'Content-Type': 'application/json'
     }
 
-    data = {
-        "prompt": prompt,
-        "n": 1,
-        "size": "512x512"
+    json_data = {
+        "text_prompts": [{"text": prompt}],
+        "cfg_scale": 7,
+        "clip_guidance_preset": "FAST_BLUE",
+        "height": 512,
+        "width": 512,
+        "samples": 1,
+        "steps": 30
     }
 
-    response = requests.post(OPENAI_API_URL, headers=headers, json=data)
+    response = requests.post(STABILITY_API_URL, headers=headers, json=json_data)
+
     if response.status_code != 200:
         return f"Error generating image: {response.text}", 500
 
-    image_url = response.json()['data'][0]['url']
-    image_data = requests.get(image_url).content
+    image_data = response.json()['artifacts'][0]['base64']
+    image_bytes = b64decode(image_data)
 
     timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
     filename = f'image_{timestamp}.png'
     filepath = os.path.join(IMAGE_DIR, filename)
     with open(filepath, 'wb') as f:
-        f.write(image_data)
+        f.write(image_bytes)
 
     return render_template('result.html', image_url=filepath, prompt=prompt)
 

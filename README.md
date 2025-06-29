@@ -1,10 +1,10 @@
-# Flask Text-to-Image App using OpenAI
+# Flask Text-to-Image App (Stability AI)
 
-Enter a prompt, generate an AI image via OpenAI DALL·E, and download the result.
+Generate AI images using Stable Diffusion via Stability API.
 
 ## Setup
 ```
 pip install -r requirements.txt
-export OPENAI_API_KEY=your-api-key
+export STABILITY_API_KEY=your-key
 python app.py
 ```
